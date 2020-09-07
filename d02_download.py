@@ -63,8 +63,8 @@ with webdriver.Firefox() as driver:
     time.sleep(20)
 
   # start 1865-01-27 08:00 汉口
-  loopdt = datetime.fromisoformat('1865-01-01T00:01:00')
-  loopdt = datetime.fromisoformat('2020-09-05T00:01:00')
+  #loopdt = datetime.fromisoformat('1865-01-01T00:01:00')
+  loopdt = datetime.fromisoformat('1925-06-01T00:01:00')
   onehour = timedelta(hours=1)
   JSONPATH = "json"
   os.makedirs(JSONPATH, exist_ok=True)
@@ -77,7 +77,7 @@ with webdriver.Firefox() as driver:
     else:
       getjson(driver, fromdate, filename)
       print(".... DOWNLOADED")
-      time.sleep(1)
+      #time.sleep(1)
 
     loopdt += onehour
 
