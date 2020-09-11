@@ -1,8 +1,10 @@
-# convert json to rdb
+# json to sqlite
 # use sqlite here, for sql.js read future
 
 import sqlite3
 import json
+import glob
+import os
 
 def db_create(c):
   # Create table
@@ -98,9 +100,13 @@ def chk_digit(s):
 
 conn = sqlite3.connect('example.db')
 c = conn.cursor()
-#db_create(c)
-json_onefile(c, conn, "json1/20200905_0800.json")
-db_read(c)
+db_create(c)
+for filename in glob.glob("json2/*.json"):
+  print(filename, end="")
+  json_onefile(c, conn, filename)
+  os.remove(filename)
+  print("...done")
+#db_read(c)
 conn.close()
 
 
