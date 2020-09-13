@@ -13,9 +13,9 @@
   <header class="container-fluid">
     <div class="row bg-info text-light align-baseline">
       <div class="col">
-        <a class="text-light m-2" href="https://izayoi5776.github.io/tgpcanada_org_waterlist_download/" data-toggle="tooltip" title="本页面" > 本站 </a>
-        <a class="text-light m-2" href="http://tgpcanada.org/waterlist.aspx" target="_blank" data-toggle="tooltip" title="数据源网站" > 数据源 </a>
-        <a class="text-light m-2" href="https://github.com/izayoi5776/tgpcanada_org_waterlist_download" target="_blank" data-toggle="tooltip" title="源代码" > github </a>
+        <a class="text-light m-2" href="https://izayoi5776.github.io/download_113_57_190_228/" data-toggle="tooltip" title="本页面" > 本站 </a>
+        <a class="text-light m-2" href="http://113.57.190.228:8001/" target="_blank" data-toggle="tooltip" title="数据源网站" > 数据源 </a>
+        <a class="text-light m-2" href="https://github.com/izayoi5776/download_113_57_190_228" target="_blank" data-toggle="tooltip" title="源代码" > github </a>
         <button type="button" class="btn btn-info" data-toggle="tooltip" data-html="true" title='
           <div>
               <p class="h5">利用方法</p>
@@ -109,17 +109,6 @@ MathJax = {
 <script>
 
 const chart1 = function(data){
-  /*data0 = data[0].split(',')
-  data0.unshift('x');
-  data2 = data[2].split(',')
-  data2.unshift('上游水位(m)');
-  data3 = data[3].split(',')
-  data3.unshift('下游水位(m)');
-  data4 = data[4].split(',')
-  data4.unshift('三峡入库(m^3/s)');
-  data5 = data[5].split(',')
-  data5.unshift('三峡出库(m^3/s)');
-*/
   data[0][1] = "流量(出)"
   data[0][2] = "流量(入)"
   data[0][3] = "水位"
@@ -329,95 +318,6 @@ const chart9 = function(data){
 /**
  * dtype 绘图类型：99入库减出库， 98年初累计水量， 97累计出库， 96累计入库
 */
-const chartCommon = function(data, dtype, bind, ymin, ymax){
-  var type = dtype;
-  switch(dtype){
-    case 99:  // 入库 - 出库
-    case 98:  // 年初累计水量
-    case 96:  // 累计入库
-      type = 4;   // 4 是入库流速
-      break;
-    case 97:  // 累计出库
-      type = 5;
-      break;
-  }
-
-  // 2012，2016，2020 are leap year
-  data0 = data[0].split(',');
-  //x = data0.slice(0, 366).map(x => x.substr(5));
-  x = data0.slice(366, 731);  // 用 2013 年的日期为 x 轴，避开闰日
-  x.unshift('x');
-  dataN = data[type].split(',');
-  n = dataN.length;
-  if(dtype===99 || dtype===98){
-    dataN2 = data[5].split(',');  // 5 是出库流速
-  }
-  const chart = c3.generate({
-    bindto: bind,
-    data:{
-      x:'x',
-      columns: []
-    },
-    point: {
-      show: false
-    },
-    axis: {
-      x: {
-          type: 'timeseries',
-          tick: {
-              format: '%m-%d'
-          }
-      },
-      y: {
-        max: ymax,
-        min: ymin
-      }
-    }
-  });
-
-  // 按年插入数据
-  var columns = [x];
-  for(var i=0, pos=0; pos<n;i++){
-    year = 2012 + i;
-    leap = ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) ? 1 : 0; // 闰年=1
-    yearlen = 365+leap;
-    yeardata = dataN.slice(pos, pos+yearlen);
-    // 流速差，累计水量计算
-    if(dtype===99 || dtype===98){
-      yeardata2 = dataN2.slice(pos, pos+yearlen);
-      for(var j=0; j<yearlen; j++){
-        yeardata[j] = yeardata[j] - yeardata2[j];   // 流速差
-      }
-    }
-    if(dtype===98 || dtype===97 || dtype===96){
-      // 累计水量
-      var sum = 0; // 年初是0
-      for(var j=1; j<yearlen; j++){
-        var sumLast = sum;
-        sum += yeardata[j-1] * 86400 / 1000000000;  // 前一天的净流速 * 1天秒数 / 10亿
-        yeardata[j-1] = sumLast;
-      }
-    }
-    yeardata.unshift(String(year));
-    pos = pos + yearlen;
-
-    // 删除闰年2/29的数据，让日期对齐
-    if(leap){
-      yeardata.splice(60,1);
-    }
-
-    columns.push(yeardata);
-  };
-  chart.load({
-    columns
-    })
-
-  return chart;
-};
-
-/**
- * dtype 绘图类型：99入库减出库， 98年初累计水量， 97累计出库， 96累计入库
-*/
 // 按年分割数据
 // date,q,qin,z
 function byyears(data, dtype){
@@ -500,7 +400,7 @@ function byyears(data, dtype){
 
 // ===================== MAIN =======================
 var data;
-//var chart2, chart3, chart4, chart5, chart6, chart7, chart8, chart9;
+
 axios.get('./data2.csv')
   .then(function (response) {
     // handle success
@@ -519,16 +419,7 @@ axios.get('./data2.csv')
     chart8(byyears(data, 97))  // 出累積
     chart9(byyears(data, 96))  // 入累積
 
-/*
-    chart2 = chartCommon(data, 2, '#chart2', 145, 180);
-    chart3 = chartCommon(data, 3, '#chart3', 63, 73);
-    chart4 = chartCommon(data, 4, '#chart4', 5000, 50000);
-    chart5 = chartCommon(data, 5, '#chart5', 5000, 50000);
-    chart6 = chartCommon(data, 99, '#chart6', -10000, 20000);
-    chart7 = chartCommon(data, 98, '#chart7', -60, 0);
-    chart8 = chartCommon(data, 97, '#chart8', 0, 500);
-    chart9 = chartCommon(data, 96, '#chart9', 0, 500);
-    */
+
   })
   .catch(function (error) {
     // handle error
